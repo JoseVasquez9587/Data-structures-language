@@ -1,0 +1,30 @@
+<mat-form-field class="example-full-width" style="width: 100%;">
+    <mat-label>Escriba el codigo:</mat-label>
+      <textarea matInput rows="10" [(ngModel)]="texto" placeholder="..."></textarea>
+    </mat-form-field>
+    <button (click)="analizar()" aria-label="Example icon button with a delete icon">
+      <mat-icon>check</mat-icon>
+    </button>
+
+  
+<table>
+  <thead>
+    <tr>
+      <th>Token</th>
+      <th>Lexema</th>
+      <th>Fila</th>
+      <th>Columna</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for(t of tokens; track t.token){
+    <tr>
+      <td>{{t.token}}</td>
+      <td>{{t.lexema}}</td>
+      <td>{{t.fila}}</td>
+      <td>{{t.columna}}</td>
+    </tr>
+    }
+  </tbody>
+</table>
+<router-outlet />
