@@ -2,3 +2,10 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+.tok-reservada { color: #2573e9; font-weight: 600; }
+.tok-id { color: #17b917; }
+.tok-numero { color: #da8825; }
+.tok-cadena { color: #6A1B9A; }
+.tok-operador { color: #db1b1b; }
+.tok-comentario { color: #757575; font-style: italic; }
+.tok-error { color: #cf2121; text-decoration: underline wavy #D32F2F; }

@@ -6,6 +6,7 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import { CommonModule } from '@angular/common'; //Este trae la importacion de for e if
 import { RouterOutlet } from '@angular/router';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 
 @Component({
@@ -16,16 +17,23 @@ import { RouterOutlet } from '@angular/router';
 })
 export class Analizador {
   protected readonly title = signal('Data-Structures-Language');
+  comentarios:any = []; 
   tokens:any = [];
   texto:string = "";
 
   analizar(){
+    this.tokens = [];
+    this.comentarios = [];
     this.texto = this.texto + "\n";//Obligatorio salto de linea
     let caracteres = [...this.texto];
     let estado = 'A';
     let fila = 1;
     let columna = 0;
     let token:any = {};
+    
+    let comentario = '';
+    let comentarioFila = 0;
+    let comentarioColumna = 0;
 
     let i = 0;
     while (i < caracteres.length){
@@ -38,62 +46,62 @@ export class Analizador {
           switch(codigo){
 
             case 65: //A ADDNODE
-              token = this.llenarToken("Identificador", "A", fila, columna);
+              token = this.llenarToken("ID", "A", fila, columna);
               estado = 'A1'
             break;
 
             case 68: //D DEQUEUE
-              token = this.llenarToken("Identificador", "D", fila, columna);
+              token = this.llenarToken("ID", "D", fila, columna);
               estado = 'D1'
             break;
 
             case 69: //E ENQUEUE
-              token = this.llenarToken("Identificador", "E", fila, columna);
+              token = this.llenarToken("ID", "E", fila, columna);
               estado = 'E1'
             break;
 
             case 71: //G GET AND GRAPH
-              token = this.llenarToken("Identificador", "G", fila, columna);
+              token = this.llenarToken("ID", "G", fila, columna);
               estado = 'G'
             break;
 
             case 72: //H HASH
-              token = this.llenarToken("Identificador", "H", fila, columna);
+              token = this.llenarToken("ID", "H", fila, columna);
               estado = 'H'
             break;
 
             case 73: //I INSERT
-              token = this.llenarToken("Identificador", "I", fila, columna);
+              token = this.llenarToken("ID", "I", fila, columna);
               estado = 'I'
             break;
 
             case 76: //L LEFT AND LIST
-              token = this.llenarToken("Identificador", "L", fila, columna);
+              token = this.llenarToken("ID", "L", fila, columna);
               estado = 'L'
             break;
 
             case 80: //P POP AND PRINT AND PUSH
-              token = this.llenarToken("Identificador", "P", fila, columna);
+              token = this.llenarToken("ID", "P", fila, columna);
               estado = 'P'
             break;
 
             case 81: //Q QUEUE
-              token = this.llenarToken("Identificador", "Q", fila, columna);
+              token = this.llenarToken("ID", "Q", fila, columna);
               estado = 'Q'
             break;
 
             case 82: //R REMOVE AND RIGHT AND ROOT
-              token = this.llenarToken("Identificador", "R", fila, columna);
+              token = this.llenarToken("ID", "R", fila, columna);
               estado = 'R'
             break;
 
             case 83: //S SET AND STACK
-              token = this.llenarToken("Identificador", "S", fila, columna);
+              token = this.llenarToken("ID", "S", fila, columna);
               estado = 'S'
             break;
 
             case 84: //T TREE
-              token = this.llenarToken("Identificador", "T", fila, columna);
+              token = this.llenarToken("ID", "T", fila, columna);
               estado = 'T'
             break;
 
@@ -113,11 +121,48 @@ export class Analizador {
                 estado = 'A';
             break;
 
+            case 48: case 49: case 50: case 51: case 52: case 53: case 54: case 55: case 56: case 57:   //0-9
+            token = this.llenarToken("NUMERO", c, fila, columna);
+              estado = 'NUM'
+            break;
+
+            case 34:// " CADENA" 
+              if(token?.token) this.tokens.push(token)
+                token = this.llenarToken("CADENA", "\"", fila, columna);
+                estado = 'CADENA'
+            break;
+
+            case 61: case 44: case 59: case 40: case 41:// = , ; ( )
+              token = this.llenarToken(c, c, fila, columna);
+              this.tokens.push(token);
+              token = {};
+              estado = 'A';
+            break;
+
+            /*case 64:@ case 36:$ case 37:%
+              token = this.llenarToken("ERROR", "Simbolo no reconocido:"+c, fila, columna);
+              this.tokens.push(token);
+              token = {};
+              estado = 'A';
+            break;*/
+
+            case 47: //    "/"
+              comentario = c;
+              comentarioFila = fila;
+              comentarioColumna = columna;
+              estado = 'COMENTARIO'
+            break;
+
             default:
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
-                token = this.llenarToken("Identificador", c, fila, columna);
+                token = this.llenarToken("ID", c, fila, columna);
                 estado = 'ID';
-              }
+              } else {
+              token = this.llenarToken("ERROR", "Simbolo no reconocido:"+c, fila, columna);
+              this.tokens.push(token);
+              token = {};
+              estado = 'A';
+            }
             break;
           } 
         break;
@@ -126,7 +171,7 @@ export class Analizador {
           switch(codigo){
 
             case 68: //D
-              token = this.llenarToken("Identificador", "AD", fila, token.columna);
+              token = this.llenarToken("ID", "AD", fila, token.columna);
               estado = 'A2'
             break;
 
@@ -159,7 +204,7 @@ export class Analizador {
           switch(codigo){
 
             case 68: //D
-              token = this.llenarToken("Identificador", "ADD", fila, token.columna);
+              token = this.llenarToken("ID", "ADD", fila, token.columna);
               estado = 'A3'
             break;
 
@@ -192,7 +237,7 @@ export class Analizador {
           switch(codigo){
 
             case 78: //N
-              token = this.llenarToken("Identificador", "ADDN", fila, token.columna);
+              token = this.llenarToken("ID", "ADDN", fila, token.columna);
               estado = 'A4'
             break;
 
@@ -225,7 +270,7 @@ export class Analizador {
           switch(codigo){
 
             case 79: //O
-              token = this.llenarToken("Identificador", "ADDNO", fila, token.columna);
+              token = this.llenarToken("ID", "ADDNO", fila, token.columna);
               estado = 'A5'
             break;
 
@@ -258,7 +303,7 @@ export class Analizador {
           switch(codigo){
 
             case 68: //D
-              token = this.llenarToken("Identificador", "ADDNOD", fila, token.columna);
+              token = this.llenarToken("ID", "ADDNOD", fila, token.columna);
               estado = 'A6'
             break;
 
@@ -291,7 +336,7 @@ export class Analizador {
           switch(codigo){
 
             case 69: //E
-              token = this.llenarToken("Reservada", "ADDNODE", fila, token.columna);
+              token = this.llenarToken("ADDNODE", "ADDNODE", fila, token.columna);
               estado = 'A7'
             break;
 
@@ -342,7 +387,7 @@ export class Analizador {
             default:
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 //llegó más letra/digito: ya no es reservada, ahora es identificador
-                token.token = "Identificador";
+                token.token = "ID";
                 token.lexema += c;
                 estado = 'ID';
               } else {
@@ -350,6 +395,7 @@ export class Analizador {
                 if(token?.token) this.tokens.push(token);
                 token = {};
                 estado = 'A';
+                columna --;
                 i--;
               }
             break;
@@ -360,7 +406,7 @@ export class Analizador {
           switch(codigo){
 
             case 69: //E DEQUEUE
-              token = this.llenarToken("Identificador", "DE", fila, token.columna);
+              token = this.llenarToken("ID", "DE", fila, token.columna);
               estado = 'D2'
             break;
 
@@ -393,7 +439,7 @@ export class Analizador {
           switch(codigo){
 
             case 81: //Q DEQUEUE
-              token = this.llenarToken("Identificador", "DEQ", fila, token.columna);
+              token = this.llenarToken("ID", "DEQ", fila, token.columna);
               estado = 'D3'
             break;
 
@@ -426,7 +472,7 @@ export class Analizador {
           switch(codigo){
 
             case 85: //U DEQUEUE
-              token = this.llenarToken("Identificador", "DEQU", fila, token.columna);
+              token = this.llenarToken("ID", "DEQU", fila, token.columna);
               estado = 'D4'
             break;
 
@@ -459,7 +505,7 @@ export class Analizador {
           switch(codigo){
 
             case 69: //E DEQUEUE
-              token = this.llenarToken("Identificador", "DEQUE", fila, token.columna);
+              token = this.llenarToken("ID", "DEQUE", fila, token.columna);
               estado = 'D5'
             break;
 
@@ -492,7 +538,7 @@ export class Analizador {
           switch(codigo){
 
             case 85: //U DEQUEUE
-              token = this.llenarToken("Identificador", "DEQUEU", fila, token.columna);
+              token = this.llenarToken("ID", "DEQUEU", fila, token.columna);
               estado = 'D6'
             break;
 
@@ -525,7 +571,7 @@ export class Analizador {
           switch(codigo){
 
             case 69: //E DEQUEUE
-              token = this.llenarToken("Reservada", "DEQUEUE", fila, token.columna);
+              token = this.llenarToken("DEQUEUE", "DEQUEUE", fila, token.columna);
               estado = 'D7'
             break;
 
@@ -575,7 +621,7 @@ export class Analizador {
 
             default:
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
-                token.token = "Identificador";
+                token.token = "ID";
                 token.lexema += c;
                 estado = 'ID';
               } else {
@@ -583,6 +629,7 @@ export class Analizador {
                 if(token?.token) this.tokens.push(token);
                 token = {};
                 estado = 'A';
+                columna --;
                 i--;
               }
             break;
@@ -593,7 +640,7 @@ export class Analizador {
           switch(codigo){
 
             case 78: //N 
-              token = this.llenarToken("Identificador", "EN", fila, token.columna);
+              token = this.llenarToken("ID", "EN", fila, token.columna);
               estado = 'E2'
             break;
 
@@ -626,7 +673,7 @@ export class Analizador {
           switch(codigo){
 
             case 81: //Q
-              token = this.llenarToken("Identificador", "ENQ", fila, token.columna);
+              token = this.llenarToken("ID", "ENQ", fila, token.columna);
               estado = 'E3'
             break;
 
@@ -659,7 +706,7 @@ export class Analizador {
           switch(codigo){
 
             case 85: //U 
-              token = this.llenarToken("Identificador", "ENQU", fila, token.columna);
+              token = this.llenarToken("ID", "ENQU", fila, token.columna);
               estado = 'E4'
             break;
 
@@ -692,7 +739,7 @@ export class Analizador {
           switch(codigo){
 
             case 69: //E 
-              token = this.llenarToken("Identificador", "ENQUE", fila, token.columna);
+              token = this.llenarToken("ID", "ENQUE", fila, token.columna);
               estado = 'E5'
             break;
 
@@ -725,7 +772,7 @@ export class Analizador {
           switch(codigo){
 
             case 85: //U
-              token = this.llenarToken("Identificador", "ENQUEU", fila, token.columna);
+              token = this.llenarToken("ID", "ENQUEU", fila, token.columna);
               estado = 'E6'
             break;
 
@@ -758,7 +805,7 @@ export class Analizador {
           switch(codigo){
 
             case 69: //E 
-              token = this.llenarToken("Reservada", "ENQUEUE", fila, token.columna);
+              token = this.llenarToken("ENQUEUE", "ENQUEUE", fila, token.columna);
               estado = 'E7'
             break;
 
@@ -808,7 +855,7 @@ export class Analizador {
 
             default:
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
-                token.token = "Identificador";
+                token.token = "ID";
                 token.lexema += c;
                 estado = 'ID';
               } else {
@@ -816,6 +863,7 @@ export class Analizador {
                 if(token?.token) this.tokens.push(token);
                 token = {};
                 estado = 'A';
+                columna --;
                 i--;
               }
             break;
@@ -826,12 +874,12 @@ export class Analizador {
           switch(codigo){
 
             case 69: //E
-              token = this.llenarToken("Identificador", "GE", fila, token.columna);
+              token = this.llenarToken("ID", "GE", fila, token.columna);
               estado = 'GE'
             break;
 
             case 82: //R
-              token = this.llenarToken("Identificador", "GR", fila, token.columna);
+              token = this.llenarToken("ID", "GR", fila, token.columna);
               estado = 'GR'
             break;
 
@@ -864,7 +912,7 @@ export class Analizador {
           switch(codigo){
 
             case 84: //T
-              token = this.llenarToken("Reservada", "GET", fila, token.columna);
+              token = this.llenarToken("GET", "GET", fila, token.columna);
               estado = 'GET'
             break;
 
@@ -914,13 +962,14 @@ export class Analizador {
 
             default:
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
-                token.token = "Identificador";
+                token.token = "ID";
                 token.lexema += c;
                 estado = 'ID';
               } else {
                 if(token?.token) this.tokens.push(token);
                 token = {};
                 estado = 'A';
+                columna --;
                 i--;
               }
             break;
@@ -931,7 +980,7 @@ export class Analizador {
           switch(codigo){
 
             case 65: //A
-              token = this.llenarToken("Identificador", "GRA", fila, token.columna);
+              token = this.llenarToken("ID", "GRA", fila, token.columna);
               estado = 'GRA'
             break;
 
@@ -964,7 +1013,7 @@ export class Analizador {
           switch(codigo){
 
             case 80: //P
-              token = this.llenarToken("Identificador", "GRAP", fila, token.columna);
+              token = this.llenarToken("ID", "GRAP", fila, token.columna);
               estado = 'GRAP'
             break;
 
@@ -997,7 +1046,7 @@ export class Analizador {
           switch(codigo){
 
             case 72: //H
-              token = this.llenarToken("Reservada", "GRAPH", fila, token.columna);
+              token = this.llenarToken("GRAPH", "GRAPH", fila, token.columna);
               estado = 'GRAPH'
             break;
 
@@ -1047,13 +1096,14 @@ export class Analizador {
 
             default:
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
-                token.token = "Identificador";
+                token.token = "ID";
                 token.lexema += c;
                 estado = 'ID';
               } else {
                 if(token?.token) this.tokens.push(token);
                 token = {};
                 estado = 'A';
+                columna --;
                 i--;
               }
             break;
@@ -1064,7 +1114,7 @@ export class Analizador {
           switch(codigo){
 
             case 65://A
-              token = this.llenarToken("Identificador", "HA", fila, token.columna);
+              token = this.llenarToken("ID", "HA", fila, token.columna);
               estado = 'HA'
             break;
 
@@ -1097,7 +1147,7 @@ export class Analizador {
           switch(codigo){
 
             case 83://S
-              token = this.llenarToken("Identificador", "HAS", fila, token.columna);
+              token = this.llenarToken("ID", "HAS", fila, token.columna);
               estado = 'HAS'
             break;
 
@@ -1130,7 +1180,7 @@ export class Analizador {
           switch(codigo){
 
             case 72://H
-              token = this.llenarToken("Reservada", "HASH", fila, token.columna);
+              token = this.llenarToken("HASH", "HASH", fila, token.columna);
               estado = 'HASH'
             break;
 
@@ -1180,13 +1230,14 @@ export class Analizador {
 
             default:
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
-                token.token = "Identificador";
+                token.token = "ID";
                 token.lexema += c;
                 estado = 'ID';
               } else {
                 if(token?.token) this.tokens.push(token);
                 token = {};
                 estado = 'A';
+                columna --;
                 i--;
               }
             break;
@@ -1197,7 +1248,7 @@ export class Analizador {
           switch(codigo){
 
             case 78://N
-              token = this.llenarToken("Identificador", "IN", fila, token.columna);
+              token = this.llenarToken("ID", "IN", fila, token.columna);
               estado = 'IN'
             break;
 
@@ -1230,7 +1281,7 @@ export class Analizador {
           switch(codigo){
 
             case 83://S
-              token = this.llenarToken("Identificador", "INS", fila, token.columna);
+              token = this.llenarToken("ID", "INS", fila, token.columna);
               estado = 'INS'
             break;
 
@@ -1263,7 +1314,7 @@ export class Analizador {
           switch(codigo){
 
             case 69://E
-              token = this.llenarToken("Identificador", "INSE", fila, token.columna);
+              token = this.llenarToken("ID", "INSE", fila, token.columna);
               estado = 'INSE'
             break;
 
@@ -1296,7 +1347,7 @@ export class Analizador {
           switch(codigo){
 
             case 82://R
-              token = this.llenarToken("Identificador", "INSER", fila, token.columna);
+              token = this.llenarToken("ID", "INSER", fila, token.columna);
               estado = 'INSER'
             break;
 
@@ -1329,7 +1380,7 @@ export class Analizador {
           switch(codigo){
 
             case 84://T
-              token = this.llenarToken("Reservada", "INSERT", fila, token.columna);
+              token = this.llenarToken("INSERT", "INSERT", fila, token.columna);
               estado = 'INSERT'
             break;
 
@@ -1379,13 +1430,14 @@ export class Analizador {
 
             default:
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
-                token.token = "Identificador";
+                token.token = "ID";
                 token.lexema += c;
                 estado = 'ID';
               } else {
                 if(token?.token) this.tokens.push(token);
                 token = {};
                 estado = 'A';
+                columna --;
                 i--;
               }
             break;
@@ -1395,11 +1447,11 @@ export class Analizador {
         case 'L':
           switch(codigo){
             case 69: //E
-              token = this.llenarToken("Identificador", "LE", fila, token.columna);
+              token = this.llenarToken("ID", "LE", fila, token.columna);
               estado = 'LE'
             break;
             case 73: //I
-              token = this.llenarToken("Identificador", "LI", fila, token.columna);
+              token = this.llenarToken("ID", "LI", fila, token.columna);
               estado = 'LI'
             break;
             case 10:
@@ -1422,7 +1474,7 @@ export class Analizador {
         case 'LE':
           switch(codigo){
             case 70: //F
-              token = this.llenarToken("Identificador", "LEF", fila, token.columna);
+              token = this.llenarToken("ID", "LEF", fila, token.columna);
               estado = 'LEF'
             break;
             case 10:
@@ -1445,7 +1497,7 @@ export class Analizador {
         case 'LEF':
           switch(codigo){
             case 84: //T
-              token = this.llenarToken("Reservada", "LEFT", fila, token.columna);
+              token = this.llenarToken("LEFT", "LEFT", fila, token.columna);
               estado = 'LEFT'
             break;
             case 10:
@@ -1477,12 +1529,12 @@ export class Analizador {
             break;
             default:
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
-                token.token = "Identificador";
+                token.token = "ID";
                 token.lexema += c;
                 estado = 'ID';
               } else {
                 if(token?.token) this.tokens.push(token);
-                token = {}; estado = 'A'; i--;
+                token = {}; estado = 'A'; i--; columna --;
               }
             break;
           }
@@ -1491,7 +1543,7 @@ export class Analizador {
         case 'LI':
           switch(codigo){
             case 83: //S
-              token = this.llenarToken("Identificador", "LIS", fila, token.columna);
+              token = this.llenarToken("ID", "LIS", fila, token.columna);
               estado = 'LIS'
             break;
             case 10:
@@ -1514,7 +1566,7 @@ export class Analizador {
         case 'LIS':
           switch(codigo){
             case 84: //T
-              token = this.llenarToken("Reservada", "LIST", fila, token.columna);
+              token = this.llenarToken("LIST", "LIST", fila, token.columna);
               estado = 'LIST'
             break;
             case 10:
@@ -1546,12 +1598,12 @@ export class Analizador {
             break;
             default:
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
-                token.token = "Identificador";
+                token.token = "ID";
                 token.lexema += c;
                 estado = 'ID';
               } else {
                 if(token?.token) this.tokens.push(token);
-                token = {}; estado = 'A'; i--;
+                token = {}; estado = 'A'; i--; columna --;
               }
             break;
           }
@@ -1560,15 +1612,15 @@ export class Analizador {
         case 'P':
           switch(codigo){
             case 79: //O
-              token = this.llenarToken("Identificador", "PO", fila, token.columna);
+              token = this.llenarToken("ID", "PO", fila, token.columna);
               estado = 'PO'
             break;
             case 82: //R
-              token = this.llenarToken("Identificador", "PR", fila, token.columna);
+              token = this.llenarToken("ID", "PR", fila, token.columna);
               estado = 'PR'
             break;
             case 85: //U
-              token = this.llenarToken("Identificador", "PU", fila, token.columna);
+              token = this.llenarToken("ID", "PU", fila, token.columna);
               estado = 'PU'
             break;
             case 10:
@@ -1591,7 +1643,7 @@ export class Analizador {
         case 'PO':
           switch(codigo){
             case 80: //P -> POP
-              token = this.llenarToken("Reservada", "POP", fila, token.columna);
+              token = this.llenarToken("POP", "POP", fila, token.columna);
               estado = 'POP'
             break;
             case 10:
@@ -1623,12 +1675,12 @@ export class Analizador {
             break;
             default:
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
-                token.token = "Identificador";
+                token.token = "ID";
                 token.lexema += c;
                 estado = 'ID';
               } else {
                 if(token?.token) this.tokens.push(token);
-                token = {}; estado = 'A'; i--;
+                token = {}; estado = 'A'; i--; columna --;
               }
             break;
           }
@@ -1637,7 +1689,7 @@ export class Analizador {
         case 'PR':
           switch(codigo){
             case 73: //I
-              token = this.llenarToken("Identificador", "PRI", fila, token.columna);
+              token = this.llenarToken("ID", "PRI", fila, token.columna);
               estado = 'PRI'
             break;
             case 10:
@@ -1660,7 +1712,7 @@ export class Analizador {
         case 'PRI':
           switch(codigo){
             case 78: //N
-              token = this.llenarToken("Identificador", "PRIN", fila, token.columna);
+              token = this.llenarToken("ID", "PRIN", fila, token.columna);
               estado = 'PRIN'
             break;
             case 10:
@@ -1683,7 +1735,7 @@ export class Analizador {
         case 'PRIN':
           switch(codigo){
             case 84: //T
-              token = this.llenarToken("Reservada", "PRINT", fila, token.columna);
+              token = this.llenarToken("PRINT", "PRINT", fila, token.columna);
               estado = 'PRINT'
             break;
             case 10:
@@ -1715,12 +1767,12 @@ export class Analizador {
             break;
             default:
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
-                token.token = "Identificador";
+                token.token = "ID";
                 token.lexema += c;
                 estado = 'ID';
               } else {
                 if(token?.token) this.tokens.push(token);
-                token = {}; estado = 'A'; i--;
+                token = {}; estado = 'A'; i--; columna --;
               }
             break;
           }
@@ -1729,7 +1781,7 @@ export class Analizador {
         case 'PU':
           switch(codigo){
             case 83: //S
-              token = this.llenarToken("Identificador", "PUS", fila, token.columna);
+              token = this.llenarToken("ID", "PUS", fila, token.columna);
               estado = 'PUS'
             break;
             case 10:
@@ -1752,7 +1804,7 @@ export class Analizador {
         case 'PUS':
           switch(codigo){
             case 72: //H
-              token = this.llenarToken("Reservada", "PUSH", fila, token.columna);
+              token = this.llenarToken("PUSH", "PUSH", fila, token.columna);
               estado = 'PUSH'
             break;
             case 10:
@@ -1784,12 +1836,12 @@ export class Analizador {
             break;
             default:
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
-                token.token = "Identificador";
+                token.token = "ID";
                 token.lexema += c;
                 estado = 'ID';
               } else {
                 if(token?.token) this.tokens.push(token);
-                token = {}; estado = 'A'; i--;
+                token = {}; estado = 'A'; i--; columna --;
               }
             break;
           }
@@ -1798,7 +1850,7 @@ export class Analizador {
         case 'Q':
           switch(codigo){
             case 85: //U
-              token = this.llenarToken("Identificador", "QU", fila, token.columna);
+              token = this.llenarToken("ID", "QU", fila, token.columna);
               estado = 'QU'
             break;
             case 10:
@@ -1821,7 +1873,7 @@ export class Analizador {
         case 'QU':
           switch(codigo){
             case 69: //E
-              token = this.llenarToken("Identificador", "QUE", fila, token.columna);
+              token = this.llenarToken("ID", "QUE", fila, token.columna);
               estado = 'QUE'
             break;
             case 10:
@@ -1844,7 +1896,7 @@ export class Analizador {
         case 'QUE':
           switch(codigo){
             case 85: //U
-              token = this.llenarToken("Identificador", "QUEU", fila, token.columna);
+              token = this.llenarToken("ID", "QUEU", fila, token.columna);
               estado = 'QUEU'
             break;
             case 10:
@@ -1867,7 +1919,7 @@ export class Analizador {
         case 'QUEU':
           switch(codigo){
             case 69: //E -> QUEUE
-              token = this.llenarToken("Reservada", "QUEUE", fila, token.columna);
+              token = this.llenarToken("QUEUE", "QUEUE", fila, token.columna);
               estado = 'QUEUE'
             break;
             case 10:
@@ -1899,12 +1951,12 @@ export class Analizador {
             break;
             default:
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
-                token.token = "Identificador";
+                token.token = "ID";
                 token.lexema += c;
                 estado = 'ID';
               } else {
                 if(token?.token) this.tokens.push(token);
-                token = {}; estado = 'A'; i--;
+                token = {}; estado = 'A'; i--; columna --;
               }
             break;
           }
@@ -1913,15 +1965,15 @@ export class Analizador {
         case 'R':
           switch(codigo){
             case 69: //E
-              token = this.llenarToken("Identificador", "RE", fila, token.columna);
+              token = this.llenarToken("ID", "RE", fila, token.columna);
               estado = 'RE'
             break;
             case 73: //I
-              token = this.llenarToken("Identificador", "RI", fila, token.columna);
+              token = this.llenarToken("ID", "RI", fila, token.columna);
               estado = 'RI'
             break;
             case 79: //O
-              token = this.llenarToken("Identificador", "RO", fila, token.columna);
+              token = this.llenarToken("ID", "RO", fila, token.columna);
               estado = 'RO'
             break;
             case 10:
@@ -1944,7 +1996,7 @@ export class Analizador {
         case 'RE':
           switch(codigo){
             case 77: //M
-              token = this.llenarToken("Identificador", "REM", fila, token.columna);
+              token = this.llenarToken("ID", "REM", fila, token.columna);
               estado = 'REM'
             break;
             case 10:
@@ -1967,7 +2019,7 @@ export class Analizador {
         case 'REM':
           switch(codigo){
             case 79: //O
-              token = this.llenarToken("Identificador", "REMO", fila, token.columna);
+              token = this.llenarToken("ID", "REMO", fila, token.columna);
               estado = 'REMO'
             break;
             case 10:
@@ -1990,7 +2042,7 @@ export class Analizador {
         case 'REMO':
           switch(codigo){
             case 86: //V
-              token = this.llenarToken("Identificador", "REMOV", fila, token.columna);
+              token = this.llenarToken("ID", "REMOV", fila, token.columna);
               estado = 'REMOV'
             break;
             case 10:
@@ -2013,7 +2065,7 @@ export class Analizador {
         case 'REMOV':
           switch(codigo){
             case 69: //E -> REMOVE
-              token = this.llenarToken("Reservada", "REMOVE", fila, token.columna);
+              token = this.llenarToken("REMOVE", "REMOVE", fila, token.columna);
               estado = 'REMOVE'
             break;
             case 10:
@@ -2045,12 +2097,12 @@ export class Analizador {
             break;
             default:
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
-                token.token = "Identificador";
+                token.token = "ID";
                 token.lexema += c;
                 estado = 'ID';
               } else {
                 if(token?.token) this.tokens.push(token);
-                token = {}; estado = 'A'; i--;
+                token = {}; estado = 'A'; i--; columna --;
               }
             break;
           }
@@ -2059,7 +2111,7 @@ export class Analizador {
         case 'RI':
           switch(codigo){
             case 71: //G
-              token = this.llenarToken("Identificador", "RIG", fila, token.columna);
+              token = this.llenarToken("ID", "RIG", fila, token.columna);
               estado = 'RIG'
             break;
             case 10:
@@ -2082,7 +2134,7 @@ export class Analizador {
         case 'RIG':
           switch(codigo){
             case 72: //H
-              token = this.llenarToken("Identificador", "RIGH", fila, token.columna);
+              token = this.llenarToken("ID", "RIGH", fila, token.columna);
               estado = 'RIGH'
             break;
             case 10:
@@ -2105,7 +2157,7 @@ export class Analizador {
         case 'RIGH':
           switch(codigo){
             case 84: //T -> RIGHT
-              token = this.llenarToken("Reservada", "RIGHT", fila, token.columna);
+              token = this.llenarToken("RIGHT", "RIGHT", fila, token.columna);
               estado = 'RIGHT'
             break;
             case 10:
@@ -2137,12 +2189,12 @@ export class Analizador {
             break;
             default:
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
-                token.token = "Identificador";
+                token.token = "ID";
                 token.lexema += c;
                 estado = 'ID';
               } else {
                 if(token?.token) this.tokens.push(token);
-                token = {}; estado = 'A'; i--;
+                token = {}; estado = 'A'; i--; columna --;
               }
             break;
           }
@@ -2151,7 +2203,7 @@ export class Analizador {
         case 'RO':
           switch(codigo){
             case 79: //O
-              token = this.llenarToken("Identificador", "ROO", fila, token.columna);
+              token = this.llenarToken("ID", "ROO", fila, token.columna);
               estado = 'ROO'
             break;
             case 10:
@@ -2174,7 +2226,7 @@ export class Analizador {
         case 'ROO':
           switch(codigo){
             case 84: //T -> ROOT
-              token = this.llenarToken("Reservada", "ROOT", fila, token.columna);
+              token = this.llenarToken("ROOT", "ROOT", fila, token.columna);
               estado = 'ROOT'
             break;
             case 10:
@@ -2206,12 +2258,12 @@ export class Analizador {
             break;
             default:
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
-                token.token = "Identificador";
+                token.token = "ID";
                 token.lexema += c;
                 estado = 'ID';
               } else {
                 if(token?.token) this.tokens.push(token);
-                token = {}; estado = 'A'; i--;
+                token = {}; estado = 'A'; i--; columna --;
               }
             break;
           }
@@ -2220,11 +2272,11 @@ export class Analizador {
         case 'S': 
           switch(codigo){
             case 69: //E
-              token = this.llenarToken("Identificador", "SE", fila, token.columna);
+              token = this.llenarToken("ID", "SE", fila, token.columna);
               estado = 'SE'
             break;
             case 84: //T
-              token = this.llenarToken("Identificador", "ST", fila, token.columna);
+              token = this.llenarToken("ID", "ST", fila, token.columna);
               estado = 'ST'
             break;
             case 10:
@@ -2247,7 +2299,7 @@ export class Analizador {
         case 'SE':
           switch(codigo){
             case 84: //T -> SET
-              token = this.llenarToken("Reservada", "SET", fila, token.columna);
+              token = this.llenarToken("SET", "SET", fila, token.columna);
               estado = 'SET'
             break;
             case 10:
@@ -2279,12 +2331,12 @@ export class Analizador {
             break;
             default:
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
-                token.token = "Identificador";
+                token.token = "ID";
                 token.lexema += c;
                 estado = 'ID';
               } else {
                 if(token?.token) this.tokens.push(token);
-                token = {}; estado = 'A'; i--;
+                token = {}; estado = 'A'; i--; columna --;
               }
             break;
           }
@@ -2293,7 +2345,7 @@ export class Analizador {
         case 'ST':
           switch(codigo){
             case 65: //A
-              token = this.llenarToken("Identificador", "STA", fila, token.columna);
+              token = this.llenarToken("ID", "STA", fila, token.columna);
               estado = 'STA'
             break;
             case 10:
@@ -2316,7 +2368,7 @@ export class Analizador {
         case 'STA':
           switch(codigo){
             case 67: //C
-              token = this.llenarToken("Identificador", "STAC", fila, token.columna);
+              token = this.llenarToken("ID", "STAC", fila, token.columna);
               estado = 'STAC'
             break;
             case 10:
@@ -2339,7 +2391,7 @@ export class Analizador {
         case 'STAC':
           switch(codigo){
             case 75: //K -> STACK
-              token = this.llenarToken("Reservada", "STACK", fila, token.columna);
+              token = this.llenarToken("STACK", "STACK", fila, token.columna);
               estado = 'STACK'
             break;
             case 10:
@@ -2371,12 +2423,12 @@ export class Analizador {
             break;
             default:
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
-                token.token = "Identificador";
+                token.token = "ID";
                 token.lexema += c;
                 estado = 'ID';
               } else {
                 if(token?.token) this.tokens.push(token);
-                token = {}; estado = 'A'; i--;
+                token = {}; estado = 'A'; i--; columna --;
               }
             break;
           }
@@ -2385,7 +2437,7 @@ export class Analizador {
         case 'T':
           switch(codigo){
             case 82: //R
-              token = this.llenarToken("Identificador", "TR", fila, token.columna);
+              token = this.llenarToken("ID", "TR", fila, token.columna);
               estado = 'TR'
             break;
             case 10:
@@ -2408,7 +2460,7 @@ export class Analizador {
         case 'TR':
           switch(codigo){
             case 69: //E
-              token = this.llenarToken("Identificador", "TRE", fila, token.columna);
+              token = this.llenarToken("ID", "TRE", fila, token.columna);
               estado = 'TRE'
             break;
             case 10:
@@ -2431,7 +2483,7 @@ export class Analizador {
         case 'TRE':
           switch(codigo){
             case 69: //E -> TREE
-              token = this.llenarToken("Reservada", "TREE", fila, token.columna);
+              token = this.llenarToken("TREE", "TREE", fila, token.columna);
               estado = 'TREE'
             break;
             case 10:
@@ -2463,13 +2515,144 @@ export class Analizador {
             break;
             default:
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
-                token.token = "Identificador";
+                token.token = "ID";
                 token.lexema += c;
                 estado = 'ID';
               } else {
                 if(token?.token) this.tokens.push(token);
-                token = {}; estado = 'A'; i--;
+                token = {}; estado = 'A'; i--; columna --;
               }
+            break;
+          }
+        break;
+
+        case 'NUM': 
+          switch(true){
+            case (codigo>=48 && codigo<=57):
+              token.lexema += c;
+              estado = 'NUM';
+            break;
+
+            case (codigo==10):
+              this.tokens.push(token);
+              fila++; columna = 0; token = {}; estado = 'A';
+            break;
+
+            case (codigo==32):
+              this.tokens.push(token);
+              token = {}; estado = 'A';
+            break;
+
+            default:
+              this.tokens.push(token);
+              token = {}; estado = 'A'; i--; columna --;
+            break;
+          }
+        break;
+      
+        case 'CADENA': 
+          switch(codigo){
+            case 34: //"
+              token.lexema += c;
+              this.tokens.push(token);//Cerramos porque viene "
+              token = {};
+              estado = 'A';
+            break;
+
+            case 10:
+              token.token = "ERROR";
+              token.lexema = "Cadena sin cerrar";
+              this.tokens.push(token);
+              fila++; columna = 0; token = {}; estado = 'A';
+            break;
+
+            /*case (codigo==32): "Hola     mundo"
+              this.tokens.push(token);
+              token = {}; estado = 'A';
+            break;*/
+
+            default:
+              token.lexema += c;
+              estado = 'CADENA';
+            break;
+          }
+        break;
+        
+        case 'COMENTARIO':
+          switch(codigo){
+          case 47: // "//" 
+            comentario += c;
+            estado = 'LINEA';
+          break;
+
+          case 42: // "/*"
+            comentario += c;
+            estado = 'BLOQUE';
+          break;
+
+          default:
+            token = this.llenarToken("ERROR", "Simbolo no reconocido: /", fila, comentarioColumna);
+            this.tokens.push(token);
+            token = {};
+            estado = 'A'; 
+            i--;
+            columna --;
+          break;
+        }
+        break;
+
+        case 'LINEA':
+          switch(codigo){
+            case 10:
+              this.comentarios.push({token:'COMENTARIO', lexema:comentario, fila:comentarioFila, columna:comentarioColumna});
+              comentario = '';
+              fila++; columna = 0; estado = 'A';
+            break;
+            default:
+              comentario += c; 
+              estado = 'LINEA';
+            break;
+          }
+        break;
+
+        case 'BLOQUE':
+          switch(codigo){
+            case 42: //posible cierre "*/"
+              estado = 'BLOQUEC';
+              comentario += c;
+            break;
+            case 10:
+              fila++; columna = 0;
+              estado = 'BLOQUE';
+              comentario += c;
+            break;
+            default:
+              estado = 'BLOQUE';
+              comentario += c;
+            break;
+          }
+        break;
+
+        case 'BLOQUEC':
+          switch(codigo){
+            case 47: // "*/"
+              comentario += c;
+              this.comentarios.push({token:'COMENTARIO', lexema:comentario, fila:comentarioFila, columna:comentarioColumna});
+              comentario = '';
+              estado = 'A';
+            break;
+            case 42:
+              comentario += c;
+              estado = 'BLOQUEC';
+            break;
+            case 10:
+              comentario += c;
+              fila++; columna = 0;
+              estado = 'BLOQUE';
+            break;
+            default:
+              comentario += c;
+              estado = 'BLOQUE';
             break;
           }
         break;
@@ -2481,26 +2664,28 @@ export class Analizador {
               estado = 'ID';
               break;
               case (codigo==10):
-              if(token?.token){ token.token = "Identificador"; this.tokens.push(token); }
+              if(token?.token){ token.token = "ID"; this.tokens.push(token); }
               fila++; columna = 0; token = {}; estado = 'A';
               break;
 
             case (codigo==32): 
-              if(token?.token){ token.token = "Identificador"; this.tokens.push(token); }
+              if(token?.token){ token.token = "ID"; this.tokens.push(token); }
               token = {}; estado = 'A';
               break;
 
             default:
-              if(token?.token){ token.token = "Identificador"; this.tokens.push(token); }
+              if(token?.token){ token.token = "ID"; this.tokens.push(token); }
               token = {};
               estado = 'A';
               i--;
+              columna --;
           }
         break;
-      
+        
       }
       i++;
     }
+    this.pintar();
   }
 
   llenarToken(token:string,lexema:string, fila:number, columna:number){
@@ -2513,8 +2698,64 @@ export class Analizador {
     return objeto;
   
   }
-}
 
+constructor(private sanitizer: DomSanitizer){}
+
+codigoPintado:SafeHtml = '';
+
+pintar(){
+    let items = [...this.tokens, ...this.comentarios]
+      .sort((a,b)=> a.fila!==b.fila ? a.fila-b.fila : a.columna-b.columna);
+ 
+    let filaActual = 1;
+    let columnaActual = 1;
+    let html = '';
+ 
+    for(let item of items){ 
+ 
+      while(filaActual < item.fila){
+        html += '\n';
+        filaActual++;
+        columnaActual = 1;
+      }
+ 
+      while(columnaActual < item.columna){
+        html += ' ';
+        columnaActual++;
+      }
+ 
+      html += '<span class="' + this.clasePorTipo(item.token) + '">' + this.esSeguro(item.lexema) + '</span>';
+      //html += `<span class= ${this.clasePorTipo(item.token)}">${this.esSeguro(item.lexema)}</span>`;
+
+      let lineasDelLexema = item.lexema.split('\n');
+      if(lineasDelLexema.length > 1){
+        filaActual += lineasDelLexema.length - 1;
+        columnaActual = lineasDelLexema[lineasDelLexema.length - 1].length + 1;
+      } else {
+        columnaActual += item.lexema.length;
+      }
+    }
+ 
+    this.codigoPintado = this.sanitizer.bypassSecurityTrustHtml(html);
+  }
+ 
+  clasePorTipo(tipo:string):string {
+    switch(tipo){
+      case 'ID': return 'tok-id';
+      case 'NUMERO': return 'tok-numero';
+      case 'CADENA': return 'tok-cadena';
+      case 'ERROR': return 'tok-error';
+      case 'COMENTARIO': return 'tok-comentario';
+      case '=': case ',': case ';': case '(': case ')': return 'tok-operador';
+      default: return 'tok-reservada'; 
+    }
+  }
+ 
+  esSeguro(s:string){
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  
+}
 
     /*for(let c of caracteres){
       let codigo = c.charCodeAt(0);
@@ -2525,7 +2766,7 @@ export class Analizador {
           switch(codigo){
 
             case 101://e
-              token = this.llenarToken("Identificador", "e", fila, columna);
+              token = this.llenarToken("ID", "e", fila, columna);
               estado = 'B'
             break;
 
@@ -2551,7 +2792,7 @@ export class Analizador {
         case 'B':
           switch(codigo){
             case 108://l
-              token = this.llenarToken("Identificador", "el", fila, token.columna);
+              token = this.llenarToken("ID", "el", fila, token.columna);
               estado = 'C'
               break;
             
@@ -2577,7 +2818,7 @@ export class Analizador {
         case 'C':
           switch(codigo){
             case 115://s
-              token = this.llenarToken("Identificador", "els", fila, token.columna);
+              token = this.llenarToken("ID", "els", fila, token.columna);
               estado = 'D'
             break;
 
@@ -2602,7 +2843,7 @@ export class Analizador {
         case 'D':
           switch(codigo){
             case 101://e
-              token = this.llenarToken("Identificador", "else", fila, token.columna);
+              token = this.llenarToken("ID", "else", fila, token.columna);
               estado = 'E'
             break;
 

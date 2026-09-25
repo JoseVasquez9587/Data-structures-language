@@ -6,25 +6,43 @@
       <mat-icon>check</mat-icon>
     </button>
 
+    <div class="codigo-card">
+      <div class="codigo-card-head">
+        <h3>Salida de código</h3>
+      </div>
+      <pre [innerHTML]="codigoPintado" class="codigo-pintado"></pre>
+    </div>
   
-<table>
-  <thead>
-    <tr>
-      <th>Token</th>
-      <th>Lexema</th>
-      <th>Fila</th>
-      <th>Columna</th>
-    </tr>
-  </thead>
-  <tbody>
-    @for(t of tokens; track t.token){
-    <tr>
-      <td>{{t.token}}</td>
-      <td>{{t.lexema}}</td>
-      <td>{{t.fila}}</td>
-      <td>{{t.columna}}</td>
-    </tr>
-    }
-  </tbody>
-</table>
+    <div class="tabla-card">
+      <div class="tabla-card-head">
+        <h3>Tabla de Tokens Generada</h3>
+        <span class="contador">{{ tokens.length }} componentes reconocidos</span>
+      </div>
+      <table class="tabla-tokens">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Token</th>
+            <th>Lexema</th>
+            <th>Fila</th>
+            <th>Columna</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for(t of tokens; track $index){
+          <tr>
+            <td class="col-num">{{ $index + 1 }}</td>
+            <td class="col-token">{{ t.token }}</td>
+            <td class="col-lexema"><code>{{ t.lexema }}</code></td>
+            <td class="col-pos">{{ t.fila }}</td>
+            <td class="col-pos">{{ t.columna }}</td>
+          </tr>
+          } @empty {
+          <tr>
+            <td colspan="5" class="fila-vacia">No hay tokens para mostrar.</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
 <router-outlet />
