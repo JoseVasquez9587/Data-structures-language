@@ -139,13 +139,6 @@ export class Analizador {
               estado = 'A';
             break;
 
-            /*case 64:@ case 36:$ case 37:%
-              token = this.llenarToken("ERROR", "Simbolo no reconocido:"+c, fila, columna);
-              this.tokens.push(token);
-              token = {};
-              estado = 'A';
-            break;*/
-
             case 47: //    "/"
               comentario = c;
               comentarioFila = fila;
@@ -2703,28 +2696,28 @@ constructor(private sanitizer: DomSanitizer){}
 
 codigoPintado:SafeHtml = '';
 
-pintar(){
+  pintar(){
     let items = [...this.tokens, ...this.comentarios]
       .sort((a,b)=> a.fila!==b.fila ? a.fila-b.fila : a.columna-b.columna);
- 
+
     let filaActual = 1;
     let columnaActual = 1;
     let html = '';
- 
+
     for(let item of items){ 
- 
+
       while(filaActual < item.fila){
         html += '\n';
         filaActual++;
         columnaActual = 1;
       }
- 
+
       while(columnaActual < item.columna){
         html += ' ';
         columnaActual++;
       }
- 
-      html += '<span class="' + this.clasePorTipo(item.token) + '">' + this.esSeguro(item.lexema) + '</span>';
+
+      html += '<span class="' + this.Racista(item.token) + '">' + this.esSeguroxd(item.lexema) + '</span>';
       //html += `<span class= ${this.clasePorTipo(item.token)}">${this.esSeguro(item.lexema)}</span>`;
 
       let lineasDelLexema = item.lexema.split('\n');
@@ -2735,11 +2728,11 @@ pintar(){
         columnaActual += item.lexema.length;
       }
     }
- 
+
     this.codigoPintado = this.sanitizer.bypassSecurityTrustHtml(html);
   }
  
-  clasePorTipo(tipo:string):string {
+  Racista(tipo:string):string {
     switch(tipo){
       case 'ID': return 'tok-id';
       case 'NUMERO': return 'tok-numero';
@@ -2751,7 +2744,7 @@ pintar(){
     }
   }
  
-  esSeguro(s:string){
+  esSeguroxd(s:string){
     return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
   
