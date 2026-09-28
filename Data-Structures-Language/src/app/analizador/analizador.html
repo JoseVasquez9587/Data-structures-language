@@ -45,4 +45,38 @@
         </tbody>
       </table>
     </div>
+
+    <div class="tabla-card">
+  <div class="tabla-card-head">
+    <h3>Errores léxicos</h3>
+    <span class="contador">{{ errores.length }} errores</span>
+  </div>
+  <table class="tabla-tokens">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Lexema</th>
+        <th>Fila</th>
+        <th>Columna</th>
+        <th>Descripción</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for(e of errores; track $index){
+      <tr>
+        <td class="col-num">{{ $index + 1 }}</td>
+        <td class="col-lexema"><code>{{ e.lexema }}</code></td>
+        <td class="col-pos">{{ e.fila }}</td>
+        <td class="col-pos">{{ e.columna }}</td>
+        <td>{{ e.descripcion }}</td>
+      </tr>
+      } @empty {
+      <tr>
+        <td colspan="5" class="fila-vacia">Sin errores léxicos.</td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>
+
 <router-outlet />

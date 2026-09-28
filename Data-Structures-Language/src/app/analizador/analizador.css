@@ -1,4 +1,4 @@
-/*.codigo-card, .tabla-card {
+.codigo-card, .tabla-card {
   border: 1px solid #e3e3e3;
   border-radius: 12px;
   overflow: hidden;
@@ -48,4 +48,4 @@
   border-radius: 4px;
 }
 .col-pos { color: #999; width: 50px; }
-.fila-vacia { text-align: center; color: #999; padding: 24px; font-style: italic; }*/
+.fila-vacia { text-align: center; color: #999; padding: 24px; font-style: italic; }

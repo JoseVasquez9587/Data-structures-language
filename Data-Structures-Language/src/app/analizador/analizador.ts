@@ -24,8 +24,8 @@ export class Analizador {
   analizar(){
     this.tokens = [];
     this.comentarios = [];
-    this.texto = this.texto + "\n";//Obligatorio salto de linea
-    let caracteres = [...this.texto];
+    let textoAnalizado = this.texto + "\n";//Obligatorio salto de linea (sin tocar lo que ve el usuario)
+    let caracteres = [...textoAnalizado];
     let estado = 'A';
     let fila = 1;
     let columna = 0;
@@ -85,6 +85,11 @@ export class Analizador {
               estado = 'P'
             break;
 
+            case 78: //N Numero
+              token = this.llenarToken("ID", "N", fila, columna);
+              estado = 'N'
+            break;
+
             case 81: //Q QUEUE
               token = this.llenarToken("ID", "Q", fila, columna);
               estado = 'Q'
@@ -113,7 +118,7 @@ export class Analizador {
                 estado = 'A';
             break;
 
-            case 32://Space
+            case 32: case 9: case 13://Space, Tab, CR
               if(token?.token) this.tokens.push(token)
                 //fila++;
                 //columna = 0;
@@ -123,7 +128,7 @@ export class Analizador {
 
             case 48: case 49: case 50: case 51: case 52: case 53: case 54: case 55: case 56: case 57:   //0-9
             token = this.llenarToken("NUMERO", c, fila, columna);
-              estado = 'NUM'
+              estado = 'ENTERO'
             break;
 
             case 34:// " CADENA" 
@@ -132,7 +137,12 @@ export class Analizador {
                 estado = 'CADENA'
             break;
 
-            case 61: case 44: case 59: case 40: case 41:// = , ; ( )
+            case 61: //=
+              token = this.llenarToken(c, c, fila, columna);
+              estado = 'ASIG'
+            break;
+
+            case 44: case 59: case 40: case 41://= , ; ( )
               token = this.llenarToken(c, c, fila, columna);
               this.tokens.push(token);
               token = {};
@@ -151,7 +161,7 @@ export class Analizador {
                 token = this.llenarToken("ID", c, fila, columna);
                 estado = 'ID';
               } else {
-              token = this.llenarToken("ERROR", "Simbolo no reconocido:"+c, fila, columna);
+              token = this.llenarToken("ERROR", c, fila, columna);
               this.tokens.push(token);
               token = {};
               estado = 'A';
@@ -188,6 +198,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
@@ -221,6 +237,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
@@ -254,6 +276,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
@@ -287,6 +315,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
@@ -320,6 +354,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
@@ -353,6 +393,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
@@ -423,6 +469,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
@@ -456,6 +508,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
@@ -489,6 +547,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
@@ -522,6 +586,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
@@ -555,6 +625,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
@@ -588,6 +664,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
@@ -657,6 +739,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
@@ -690,6 +778,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
@@ -723,6 +817,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
@@ -756,6 +856,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
@@ -789,6 +895,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
@@ -822,6 +934,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
@@ -896,6 +1014,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
@@ -929,6 +1053,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
@@ -997,6 +1127,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
@@ -1030,6 +1166,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
@@ -1063,6 +1205,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
@@ -1111,6 +1259,11 @@ export class Analizador {
               estado = 'HA'
             break;
 
+            case 79://O
+              token = this.llenarToken("ID", "HO", fila, token.columna);
+              estado = 'HO'
+            break;
+
             case 10://Salto de Linea ASCII
               if(token?.token) this.tokens.push(token);
                 fila++;
@@ -1131,6 +1284,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
@@ -1164,6 +1323,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
@@ -1197,12 +1362,131 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
         break;
 
         case 'HASH': //HASH
+          switch(codigo){
+
+            case 10://Salto de Linea ASCII
+              if(token?.token) this.tokens.push(token);
+                fila++;
+                columna = 0;
+                token = {};
+                estado = 'A';
+            break;
+
+            case 32://Space
+              if(token?.token) this.tokens.push(token)
+                //fila++;
+                //columna = 0;
+                token = {};
+                estado = 'A';
+            break;
+
+            default:
+              if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
+                token.token = "ID";
+                token.lexema += c;
+                estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna --;
+                i--;
+              }
+            break;
+          } 
+        break;
+
+        case 'HO':
+          switch(codigo){
+
+            case 76://L
+              token = this.llenarToken("ID", "HOL", fila, token.columna);
+              estado = 'HOL'
+            break;
+
+            case 10://Salto de Linea ASCII
+              if(token?.token) this.tokens.push(token);
+                fila++;
+                columna = 0;
+                token = {};
+                estado = 'A';
+            break;
+
+            case 32://Space
+              if(token?.token) this.tokens.push(token)
+                //fila++;
+                //columna = 0;
+                token = {};
+                estado = 'A';
+            break;
+
+            default:
+              if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
+                token.lexema += c;
+                estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
+              }
+            break;
+          } 
+        break;
+
+        case 'HOL':
+          switch(codigo){
+
+            case 65://A
+              token = this.llenarToken("HOLA", "HOLA", fila, token.columna);
+              estado = 'HOLA'
+            break;
+
+            case 10://Salto de Linea ASCII
+              if(token?.token) this.tokens.push(token);
+                fila++;
+                columna = 0;
+                token = {};
+                estado = 'A';
+            break;
+
+            case 32://Space
+              if(token?.token) this.tokens.push(token)
+                //fila++;
+                //columna = 0;
+                token = {};
+                estado = 'A';
+            break;
+
+            default:
+              if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
+                token.lexema += c;
+                estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
+              }
+            break;
+          } 
+        break;
+
+        case 'HOLA': //HASH
           switch(codigo){
 
             case 10://Salto de Linea ASCII
@@ -1265,6 +1549,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
@@ -1298,6 +1588,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
@@ -1331,6 +1627,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
@@ -1364,6 +1666,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
@@ -1397,6 +1705,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           } 
@@ -1459,6 +1773,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -1482,6 +1802,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -1505,6 +1831,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -1551,6 +1883,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -1574,12 +1912,191 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
         break;
 
         case 'LIST'://LIST
+          switch(codigo){
+            case 10:
+              if(token?.token) this.tokens.push(token);
+                fila++; columna = 0; token = {}; estado = 'A';
+            break;
+            case 32:
+              if(token?.token) this.tokens.push(token)
+                token = {}; estado = 'A';
+            break;
+            default:
+              if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
+                token.token = "ID";
+                token.lexema += c;
+                estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {}; estado = 'A'; i--; columna --;
+              }
+            break;
+          }
+        break;
+
+        case 'N':
+          switch(codigo){
+            case 117: //u
+              token = this.llenarToken("ID", "Nu", fila, token.columna);
+              estado = 'NU'
+            break;
+
+            case 10:
+              if(token?.token) this.tokens.push(token);
+                fila++; columna = 0; token = {}; estado = 'A';
+            break;
+            case 32:
+              if(token?.token) this.tokens.push(token)
+                token = {}; estado = 'A';
+            break;
+            default:
+              if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
+                token.lexema += c;
+                estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
+              }
+            break;
+          }
+        break;
+
+        case 'NU':
+          switch(codigo){
+            case 109: //m
+              token = this.llenarToken("ID", "Num", fila, token.columna);
+              estado = 'NUM'
+            break;
+
+            case 10:
+              if(token?.token) this.tokens.push(token);
+                fila++; columna = 0; token = {}; estado = 'A';
+            break;
+            case 32:
+              if(token?.token) this.tokens.push(token)
+                token = {}; estado = 'A';
+            break;
+            default:
+              if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
+                token.lexema += c;
+                estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
+              }
+            break;
+          }
+        break;
+
+        case 'NUM':
+          switch(codigo){
+            case 101: //e
+              token = this.llenarToken("ID", "Nume", fila, token.columna);
+              estado = 'NUME'
+            break;
+
+            case 10:
+              if(token?.token) this.tokens.push(token);
+                fila++; columna = 0; token = {}; estado = 'A';
+            break;
+            case 32:
+              if(token?.token) this.tokens.push(token)
+                token = {}; estado = 'A';
+            break;
+            default:
+              if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
+                token.lexema += c;
+                estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
+              }
+            break;
+          }
+        break;
+
+        case 'NUME':
+          switch(codigo){
+            case 114: //r
+              token = this.llenarToken("ID", "Numer", fila, token.columna);
+              estado = 'NUMER'
+            break;
+
+            case 10:
+              if(token?.token) this.tokens.push(token);
+                fila++; columna = 0; token = {}; estado = 'A';
+            break;
+            case 32:
+              if(token?.token) this.tokens.push(token)
+                token = {}; estado = 'A';
+            break;
+            default:
+              if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
+                token.lexema += c;
+                estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
+              }
+            break;
+          }
+        break;
+
+        case 'NUMER':
+          switch(codigo){
+            case 111: //o
+              token = this.llenarToken("Numero", "Numero", fila, token.columna);
+              estado = 'NUMERO'
+            break;
+
+            case 10:
+              if(token?.token) this.tokens.push(token);
+                fila++; columna = 0; token = {}; estado = 'A';
+            break;
+            case 32:
+              if(token?.token) this.tokens.push(token)
+                token = {}; estado = 'A';
+            break;
+            default:
+              if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
+                token.lexema += c;
+                estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
+              }
+            break;
+          }
+        break;
+
+        case 'NUMERO'://Numero
           switch(codigo){
             case 10:
               if(token?.token) this.tokens.push(token);
@@ -1628,6 +2145,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -1651,6 +2174,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -1697,6 +2226,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -1720,6 +2255,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -1743,6 +2284,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -1789,6 +2336,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -1812,6 +2365,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -1858,6 +2417,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -1881,6 +2446,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -1904,6 +2475,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -1927,6 +2504,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -1981,6 +2564,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -2004,6 +2593,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -2027,6 +2622,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -2050,6 +2651,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -2073,6 +2680,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -2119,6 +2732,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -2142,6 +2761,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -2165,6 +2790,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -2211,6 +2842,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -2234,6 +2871,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -2284,6 +2927,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -2307,6 +2956,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -2353,6 +3008,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -2376,6 +3037,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -2399,6 +3066,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -2433,6 +3106,12 @@ export class Analizador {
               token = this.llenarToken("ID", "TR", fila, token.columna);
               estado = 'TR'
             break;
+
+            case 101: //e
+              token = this.llenarToken("ID", "Te", fila, token.columna);
+              estado = 'TE'
+            break;
+
             case 10:
               if(token?.token) this.tokens.push(token);
                 fila++; columna = 0; token = {}; estado = 'A';
@@ -2445,6 +3124,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -2468,6 +3153,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -2491,6 +3182,12 @@ export class Analizador {
               if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
                 token.lexema += c;
                 estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
               }
             break;
           }
@@ -2519,7 +3216,117 @@ export class Analizador {
           }
         break;
 
-        case 'NUM': 
+        case 'TE':
+          switch(codigo){
+            case 120: //x
+              token = this.llenarToken("ID", "Tex", fila, token.columna);
+              estado = 'TEX'
+            break;
+            case 10:
+              if(token?.token) this.tokens.push(token);
+                fila++; columna = 0; token = {}; estado = 'A';
+            break;
+            case 32:
+              if(token?.token) this.tokens.push(token)
+                token = {}; estado = 'A';
+            break;
+            default:
+              if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
+                token.lexema += c;
+                estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
+              }
+            break;
+          }
+        break;
+
+        case 'TEX':
+          switch(codigo){
+            case 116: //t
+              token = this.llenarToken("ID", "Text", fila, token.columna);
+              estado = 'TEXT'
+            break;
+            case 10:
+              if(token?.token) this.tokens.push(token);
+                fila++; columna = 0; token = {}; estado = 'A';
+            break;
+            case 32:
+              if(token?.token) this.tokens.push(token)
+                token = {}; estado = 'A';
+            break;
+            default:
+              if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
+                token.lexema += c;
+                estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
+              }
+            break;
+          }
+        break;
+
+        case 'TEXT':
+          switch(codigo){
+            case 111: //o
+              token = this.llenarToken("Texto", "Texto", fila, token.columna);
+              estado = 'TEXTO'
+            break;
+            case 10:
+              if(token?.token) this.tokens.push(token);
+                fila++; columna = 0; token = {}; estado = 'A';
+            break;
+            case 32:
+              if(token?.token) this.tokens.push(token)
+                token = {}; estado = 'A';
+            break;
+            default:
+              if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
+                token.lexema += c;
+                estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {};
+                estado = 'A';
+                columna--;
+                i--;
+              }
+            break;
+          }
+        break;
+
+        case 'TEXTO'://TEXTO
+          switch(codigo){
+            case 10:
+              if(token?.token) this.tokens.push(token);
+                fila++; columna = 0; token = {}; estado = 'A';
+            break;
+            case 32:
+              if(token?.token) this.tokens.push(token)
+                token = {}; estado = 'A';
+            break;
+            default:
+              if((codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57)){
+                token.token = "ID";
+                token.lexema += c;
+                estado = 'ID';
+              } else {
+                if(token?.token) this.tokens.push(token);
+                token = {}; estado = 'A'; i--; columna --;
+              }
+            break;
+          }
+        break;
+
+        case 'NUMEROSSS': 
           switch(true){
             case (codigo>=48 && codigo<=57):
               token.lexema += c;
@@ -2554,7 +3361,6 @@ export class Analizador {
 
             case 10:
               token.token = "ERROR";
-              token.lexema = "Cadena sin cerrar";
               this.tokens.push(token);
               fila++; columna = 0; token = {}; estado = 'A';
             break;
@@ -2584,7 +3390,7 @@ export class Analizador {
           break;
 
           default:
-            token = this.llenarToken("ERROR", "Simbolo no reconocido: /", fila, comentarioColumna);
+            token = this.llenarToken("ERROR", "/", fila, comentarioColumna);
             this.tokens.push(token);
             token = {};
             estado = 'A'; 
@@ -2650,6 +3456,42 @@ export class Analizador {
           }
         break;
 
+        case 'ENTERO': 
+          switch(true){
+            case (codigo>=48 && codigo<=57):
+              token.lexema += c;
+              estado = 'ENTERO';
+            break;
+
+            default:
+              this.tokens.push(token);
+              token = {};
+              estado = 'A';
+              columna--;
+              i--;
+            break;
+          }
+        break;
+
+        case 'ASIG': //
+          switch(codigo){
+            case 62: //> -> "=>"
+              token = this.llenarToken("Asignacion", "=>", fila, token.columna);
+              this.tokens.push(token);
+              token = {};
+              estado = 'A';
+            break;
+
+            default:
+              this.tokens.push(token);
+              token = {};
+              estado = 'A';
+              columna--;
+              i--;
+            break;
+          }
+        break;
+
         case 'ID':
           switch(true){
             case (codigo>=65 && codigo<=90) || (codigo>=97 && codigo<=122) || (codigo>=48 && codigo<=57):
@@ -2690,6 +3532,12 @@ export class Analizador {
 
     return objeto;
   
+  }
+
+  get errores(){
+    return this.tokens
+      .filter((t:any) => t.token === 'ERROR')
+      .map((t:any) => ({...t, descripcion: t.lexema.startsWith('"') ? 'Cadena sin cerrar' : 'Simbolo no reconocido'}));
   }
 
 constructor(private sanitizer: DomSanitizer){}
@@ -2734,6 +3582,10 @@ codigoPintado:SafeHtml = '';
  
   Racista(tipo:string):string {
     switch(tipo){
+      case 'Asignacion': return 'tok-asginacion';
+      case 'Texto': return 'tok-texto';
+      case 'HOLA': return 'tok-hola';
+      case 'Numero': return 'tok-number';
       case 'ID': return 'tok-id';
       case 'NUMERO': return 'tok-numero';
       case 'CADENA': return 'tok-cadena';
@@ -2881,5 +3733,3 @@ codigoPintado:SafeHtml = '';
       }
 
     }*/
-
-  

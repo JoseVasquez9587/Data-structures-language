@@ -2,10 +2,14 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+.tok-hola { color:rgb(238, 177, 177)}
 .tok-reservada { color: #2573e9; font-weight: 600; }
 .tok-id { color: #17b917; }
 .tok-numero { color: #da8825; }
+.tok-number { color: #00FFFF; }
 .tok-cadena { color: #6A1B9A; }
 .tok-operador { color: #db1b1b; }
 .tok-comentario { color: #757575; font-style: italic; }
 .tok-error { color: #cf2121; text-decoration: underline wavy #D32F2F; }
+.tok-texto { color: #008B8B; }
+.tok-asginacion {color: #ff00ff}
