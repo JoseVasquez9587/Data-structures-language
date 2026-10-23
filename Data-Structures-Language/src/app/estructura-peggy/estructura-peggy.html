@@ -1,0 +1,29 @@
+<h1> Ingrese el codigo</h1>
+<textarea [(ngModel)]="texto" rows="12" cols="80"></textarea>
+<br>
+<button (click) ="parsear()">Parsear</button>
+
+<h3>Estructuras</h3>
+<pre>{{salida}}</pre>
+
+<h3>Errores sintacticos</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Linea</th>
+      <th>Columna</th>
+      <th>Encontrado</th>
+      <th>Descripcion</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for(e of errores; track $index){
+    <tr>
+      <td>{{e.linea}}</td>
+      <td>{{e.columna}}</td>
+      <td>{{e.encontrado}}</td>
+      <td>{{e.descripcion}}</td>
+    </tr>
+    }
+  </tbody>
+</table>
