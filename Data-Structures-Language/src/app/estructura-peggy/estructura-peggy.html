@@ -1,12 +1,11 @@
-<h1> Ingrese el codigo</h1>
-<textarea [(ngModel)]="texto" rows="12" cols="80"></textarea>
+<h1>Ingrese cadena de declaracion</h1>
+<textarea style="width: 100%; height: 400px;" [(ngModel)]="texto"></textarea>
 <br>
-<button (click) ="parsear()">Parsear</button>
+<button (click)="parsear()">Comprobar cadena</button>
+<p><b>JSON Generado por la gramática:</b>
+<p>{{jsonGenerado}}</p>
 
-<h3>Estructuras</h3>
-<pre>{{salida}}</pre>
-
-<h3>Errores sintacticos</h3>
+<!--<h3>Errores sintacticos</h3>
 <table>
   <thead>
     <tr>
@@ -26,4 +25,4 @@
     </tr>
     }
   </tbody>
-</table>
+</table>-->
