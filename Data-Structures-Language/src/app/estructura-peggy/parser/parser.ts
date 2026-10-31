@@ -107,6 +107,22 @@ export class Parser {
                     }
                   }
                 }
+                /"ARRAY" _ nom:Identificador _ ";"{
+                  let estructura = {};
+                  estructura.nombre = nom;
+                  estructura.tipo = "ARREGLO";
+                  estructura.posicion = [];
+                  estructura.valores = [];
+                  estructuras.push(estructura);
+                }
+                /"INDEX" _ "(" nom:Identificador _ "," _ pos:VALOR _ "," _ val:VALOR _ ")" _ ";" {
+                for (let estructura of estructuras){
+                  if (estructura.nombre == nom){
+                    estructura.valores.push(val);
+                    estructura.posicion.push(pos);
+                    }
+                  }  
+                }
 
     VALOR = num:Numero{
             return num;

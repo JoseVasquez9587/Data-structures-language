@@ -35,6 +35,12 @@ INSERT(usuarios,"Ana");
 INSERT(usuarios,"Luis");
 REMOVE(usuarios,"Pablo");
 GRAPH(usuarios);
+
+ARRAY arreglo;
+INDEX (arreglo,0,"hola");
+INDEX (arreglo,2,"cruel");
+INDEX (arreglo,1,"mundo");
+GRAPH (arreglo);
   `;
   private parser: Parser;
 
@@ -76,7 +82,21 @@ GRAPH(usuarios);
               codigoGraphviz += "->";
             }
           }
-        } else if (estructura.tipo == "LISTA"){
+        } else if (estructura.tipo == "ARREGLO"){
+        codigoGraphviz = "rankdir=LR; ";
+        let celdas: any[] = [];
+        for (let i = 0; i < estructura.valores.length; i++){
+          celdas[Number(estructura.posicion[i])] = estructura.valores[i];
+        }
+        for (let i = 0; i < celdas.length; i++){
+          let valor = celdas[i] !== undefined ? celdas[i] : "";
+          codigoGraphviz += "n" + i + " [label=\"" + valor + "\"]; ";
+        }
+
+        for (let i = 0; i < celdas.length - 1; i++){
+          codigoGraphviz += "n" + i + "->n" + (i + 1) + "; ";
+        }
+        }else if (estructura.tipo == "LISTA"){
           codigoGraphviz = "rankdir=LR; ";
           for (let i = 0; i < estructura.valores.length; i++){
             codigoGraphviz += estructura.valores[i];
